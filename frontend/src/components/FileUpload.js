@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { uploadSongWithFiles, updateSong } from "./api.js";
+import { uploadSongWithFiles, updateSong } from "../APIs/song-api.js";
 import "./FileUpload.css";
 
 const SongUploadForm = ({ selectedSong, onSongUpdated }) => {

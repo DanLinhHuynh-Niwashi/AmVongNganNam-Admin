@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getAllSongs, getSongById } from "./api";
+import { getAllSongs, getSongById } from "../APIs/song-api.js";
 
 const SongList = ({ onSelectSong }) => {
     const [songs, setSongs] = useState([]);
