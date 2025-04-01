@@ -1,0 +1,64 @@
+/* src/components/SideMenu.css */
+.side-menu {
+    width: 220px;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-right: 1px solid #ddd;
+    transition: width 0.3s ease;
+  }
+  
+  .side-menu:hover {
+    width: 260px; 
+  }
+  
+  .app-name {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #6c757d;
+  }
+  
+  .start-session-button {
+    background-color: #d3a4f3;
+    color: white;
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-bottom: 20px;
+    width: 100%;
+    border: none;
+    transition: background-color 0.3s ease;
+  }
+  
+  .start-session-button:hover {
+    background-color: #c48aea;
+  }
+  
+  .menu-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    font-size: 1em;
+    font-weight: bold;
+    color: #6c757d;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, width 0.3s ease;
+  }
+  
+  .menu-item .icon {
+    margin-right: 10px;
+    font-size: 1.2em;
+  }
+  
+  .menu-item:hover {
+    background-color: #e9ecef;
+    color: #343a40;
+  }
+  
+  .menu-item.active {
+    background-color: #e9ecef;
+    color: #343a40;
+  }
+  
