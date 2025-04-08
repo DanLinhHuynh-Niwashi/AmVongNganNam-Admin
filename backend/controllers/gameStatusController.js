@@ -53,7 +53,7 @@ export const updateGameStatus = async (req, res) => {
           console.log(`Creating new score for song ${score.song_id}...`);  // Debugging if score is new
           scoreInfo = new ScoreInfo({
             user_id: req.user.id,
-            song: score.song,
+            song_id: score.song_id,
             easyScore: score.easyScore || 0,
             easyState: score.easyState || "",
             hardScore: score.hardScore || 0,
@@ -85,10 +85,10 @@ export const updateGameStatus = async (req, res) => {
       console.log("Merged highscore IDs:", mergedScores);  // Debugging merged highscore IDs
     }
 
-    if (unlocked_songs !== undefined) updateFields.unlocked_songs = unlocked_songs;
-    if (unlocked_instruments !== undefined) updateFields.unlocked_instruments = unlocked_instruments;
-    if (song_token !== undefined) updateFields.song_token = song_token;
-    if (instrument_token !== undefined) updateFields.instrument_token = instrument_token;
+    if (unlocked_songs.length > 0) updateFields.unlocked_songs = unlocked_songs;
+    if (unlocked_instruments.length > 0) updateFields.unlocked_instruments = unlocked_instruments;
+    if (song_token >= 0) updateFields.song_token = song_token;
+    if (instrument_token >= 0) updateFields.instrument_token = instrument_token;
 
     console.log("Update fields:", updateFields);  // Debugging the fields to be updated
 
