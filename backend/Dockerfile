@@ -9,7 +9,6 @@ COPY . .
 
 ARG SERVER_PORT
 ENV PORT=${SERVER_PORT}
-
 EXPOSE ${PORT}
 
 # Start the server

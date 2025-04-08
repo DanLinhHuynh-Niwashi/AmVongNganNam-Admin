@@ -4,8 +4,8 @@ import { verifyToken } from "../middlewares/authMiddleware.js";
 
 const gameStatusRoutes = express.Router();
 
-gameStatusRoutes.get("/:id", verifyToken, loadGameStatus);
-gameStatusRoutes.put("/:id", verifyToken, updateGameStatus);
-gameStatusRoutes.delete("/:id", verifyToken, deleteGameStatus);
+gameStatusRoutes.get("/", verifyToken, loadGameStatus);
+gameStatusRoutes.put("/", verifyToken, updateGameStatus);
+gameStatusRoutes.delete("/", verifyToken, deleteGameStatus);
 
 export default gameStatusRoutes;

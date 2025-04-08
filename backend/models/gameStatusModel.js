@@ -1,19 +1,9 @@
 import mongoose from "mongoose";
 
-const scoreInfoSchema = new mongoose.Schema({
-  song: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Song',
-    required: true,
-    unique: true  // Ensuring only one score entry per song
-  },
-  easyScore: { type: Number, default: 0 },
-  hardScore: { type: Number, default: 0 }
-});
-
 const gameStatusSchema = new mongoose.Schema({
   user_id: { 
-    type: String, 
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Account',
     required: true,
     unique: true
   },
@@ -22,7 +12,12 @@ const gameStatusSchema = new mongoose.Schema({
     ref: 'Song'
   }],
   unlocked_instruments: [String],
-  highscore: [scoreInfoSchema]
+  highscore: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'ScoreInfo'
+  }],
+  song_token: Number,
+  insturment_token: Number
 });
 
 export default mongoose.model("GameStatus", gameStatusSchema);
