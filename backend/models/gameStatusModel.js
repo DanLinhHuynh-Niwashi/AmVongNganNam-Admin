@@ -17,7 +17,7 @@ const gameStatusSchema = new mongoose.Schema({
     ref: 'ScoreInfo'
   }],
   song_token: Number,
-  insturment_token: Number
+  instrument_token: Number
 });
 
 export default mongoose.model("GameStatus", gameStatusSchema);
