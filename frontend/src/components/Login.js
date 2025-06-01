@@ -30,8 +30,7 @@ function Login() {
         alert(`Login credentials incorrect`);
       } else {
         console.log(response)
-        console.log(`To song...`)
-        navigate('/songs', { replace: true });
+        navigate('/login', { replace: true });
         window.location.reload(); 
       }
     } catch (err) {
