@@ -25,12 +25,14 @@ function Login() {
     console.log(loginInfo);
     try {
       const response = await login(loginInfo);
-      if (!response.status === 200) {
+      if (response.status !== 200) {
         console.log(response)
         alert(`Login credentials incorrect`);
       } else {
         console.log(response)
-        navigate('/songs')
+        console.log(`To song...`)
+        navigate('/songs', { replace: true });
+        window.location.reload(); 
       }
     } catch (err) {
       console.log(err);

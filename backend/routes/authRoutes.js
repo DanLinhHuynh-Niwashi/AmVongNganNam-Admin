@@ -1,5 +1,5 @@
 import express from "express";
-import { signup, login, logout, changePassword, changeAccountInfo, resetPassword, getUser } from "../controllers/authController.js";
+import { signup, login, logout, changePassword, changeAccountInfo, resetPassword, getUser, deleteAccount, getUserInfo } from "../controllers/authController.js";
 import { body } from "express-validator";
 import { validatePassword as _validatePassword } from "../utils/password-strength.js";
 import { verifyToken, isAdmin } from "../middlewares/authMiddleware.js"; // Middleware for JWT authentication
@@ -25,7 +25,9 @@ authRoutes.post("/logout", logout);
 authRoutes.post("/reset-password", resetPassword);
 authRoutes.post("/change-password", verifyToken, changePassword);
 authRoutes.post("/change-info", verifyToken, changeAccountInfo);
+authRoutes.get("/account-info", getUserInfo);
 authRoutes.get("/me", getUser);
+authRoutes.delete("/", deleteAccount);
 authRoutes.post("/admin-only", verifyToken, isAdmin, (req, res) => {
   res.json({ message: "Admin access granted." });
 });
