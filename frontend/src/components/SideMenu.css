@@ -8,10 +8,6 @@
     transition: width 0.3s ease;
   }
   
-  .side-menu:hover {
-    width: 260px; 
-  }
-  
   .app-name {
     text-align: center;
     margin-bottom: 20px;

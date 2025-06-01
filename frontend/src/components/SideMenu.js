@@ -1,11 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Nav } from 'react-bootstrap';
-import { FaSignOutAlt, FaMusic } from 'react-icons/fa';
+import { FaSignOutAlt, FaMusic, FaUser } from 'react-icons/fa';
 import { logout } from "../APIs/auth-api";
 import './SideMenu.css';
 
-const SideMenu = () => {
+const SideMenu = ({isAdmin}) => {
   const navigate = useNavigate();
   const handleLogout = async () => {
     await logout();
@@ -23,11 +23,13 @@ const SideMenu = () => {
         <h4>AVNN</h4>
       </div>
       <Nav className="flex-column">
+        {isAdmin &&
         <Nav.Link className="menu-item" onClick={() => navigate('/songs')}>
           <FaMusic className="icon" /> Song List
         </Nav.Link>
-        <Nav.Link className="menu-item" onClick={() => navigate('/upload')}>
-          <FaMusic className="icon" /> Upload Song
+        }
+        <Nav.Link className="menu-item" onClick={() => navigate('/account')}>
+          <FaUser className="icon" /> Account
         </Nav.Link>
         <Nav.Link className="menu-item" onClick={handleLogout}>
           <FaSignOutAlt className="icon" /> Logout
