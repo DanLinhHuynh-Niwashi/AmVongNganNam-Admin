@@ -4,34 +4,69 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export const verifyToken = async (req, res, next) => {
-  let token = req.cookies.token;
-  console.log(token)
+export const verifyToken = async(req, res, next) =>{
+  let token = null;
+
+  if (req.cookies && req.cookies.token) {
+    token = req.cookies.token;
+  }
+
+  // 2. If no token in cookie, try Authorization header
+  if (!token && req.headers.authorization) {
+    const authHeader = req.headers.authorization;
+    if (authHeader.startsWith("Bearer ")) {
+      token = authHeader;
+      token = token.replace("Bearer ", "");
+    } else {
+      token = authHeader;
+    }
+  }
+
   if (!token) {
-    return res.status(401).json({ message: "Access denied. No token provided." });
+    return res.status(401).json({
+      message: "Access denied. No token provided."
+    });
   }
 
   try {
-    const decoded = jwt.verify(token.replace("Bearer ", ""), process.env.JWT_SECRET);
-    const user = await Account.findById(decoded.id);
-    if (!user) {
-      res.clearCookie("token", { httpOnly: true, secure: true, sameSite: "Strict" });
-      return res.status(404).json({ message: "User not found" });
+    // Clean token in case 'Bearer ' prefix exists in cookie (defensive)
+    if (token.startsWith("Bearer ")) {
+      token = token.replace("Bearer ", "");
     }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await Account.findById(decoded.id);
+
+    if (!user) {
+      res.clearCookie("token", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "Strict"
+      });
+      return res.status(404).json({
+        message: "User not found"
+      });
+    }
+
     req.user = decoded;
     next();
-  } catch (error) {
-    res.status(401).json({ message: "Invalid token." });
+  } catch(error) {
+    return res.status(401).json({
+      message: "Invalid token."
+    });
   }
 };
 
-
-export const isAdmin = (req, res, next) => {
+export const isAdmin = (req, res, next) =>{
   if (!req.user) {
-    return res.status(401).json({ message: "Access denied. No token provided." });
+    return res.status(401).json({
+      message: "Access denied. No token provided."
+    });
   }
   if (!req.user || !req.user.isAdmin) {
-    return res.status(403).json({ message: "Access denied. Admins only." });
+    return res.status(403).json({
+      message: "Access denied. Admins only."
+    });
   }
   next();
 };
