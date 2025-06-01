@@ -1,5 +1,6 @@
 import Account from "../models/accountModel.js";
 import GameStatus from "../models/gameStatusModel.js";
+import ScoreInfo from "../models/scoreInfoModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { validationResult } from "express-validator";
@@ -85,7 +86,7 @@ export const login = async (req, res) => {
         sameSite: "Strict",
       });
   
-      res.json({ message: "Login successful.", user: { id: user._id, name: user.name, email: user.email }, token: token });
+      res.json({ message: "Login successful.", user: { id: user._id, name: user.name, email: user.email, isAdmin: user.isAdmin}, token: token });
     } catch (error) {
       res.status(500).json({ message: "Server error.", error: error.message });
     }
@@ -174,6 +175,29 @@ export const changeAccountInfo = async (req, res) => {
     }
   };
   
+  
+export const deleteAccount = async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const user = await Account.findByIdAndDelete(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    await GameStatus.deleteOne({ user_id: userId });
+
+    await ScoreInfo.deleteMany({ user_id: userId });
+
+    res.clearCookie("token", { httpOnly: true, secure: true, sameSite: "Strict" });
+
+    res.status(200).json({ message: "Account and related data deleted successfully." });
+  } catch (error) {
+    console.error("Error deleting account:", error);
+    res.status(500).json({ message: "Server error.", error: error.message });
+  }
+};
+
   export const getUser = async (req, res) => {
     try {
         const token = req.cookies.token;
@@ -188,6 +212,26 @@ export const changeAccountInfo = async (req, res) => {
         }
 
         res.json({user: decoded });
+    } catch (error) {
+        console.log(error.message);
+        res.status(403).json({ message: "Invalid token" });
+    }
+  };
+
+    export const getUserInfo = async (req, res) => {
+    try {
+        const token = req.cookies.token;
+        if (!token) {
+            return res.status(401).json({ message: "Not authenticated" });
+        }
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await Account.findById(decoded.id);
+        if (!user) {
+            res.clearCookie("token", { httpOnly: true, secure: true, sameSite: "Strict" });
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.json({user: user });
     } catch (error) {
         console.log(error.message);
         res.status(403).json({ message: "Invalid token" });
