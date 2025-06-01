@@ -1,97 +1,118 @@
 import axios from "axios";
 
-const API_URL = process.env.REACT_APP_API_URL 
-  ? `${process.env.REACT_APP_API_URL}/api/songs` 
+const API_URL = process.env.REACT_APP_API_URL
+  ? `${process.env.REACT_APP_API_URL}/api/songs`
   : `http://localhost:${process.env.REACT_APP_SERVER_PORT || 5000}/api/songs`;
 
-/**
- * Upload a new song with files.
- */
+const axiosInstance = axios.create({
+  withCredentials: true,
+});
+
+const cache = new Map();
+
+const setCache = (key, value, ttl = 300000) => {
+  const expires = Date.now() + ttl;
+  cache.set(key, { value, expires });
+};
+
+const getCache = (key) => {
+  const cached = cache.get(key);
+  if (cached && cached.expires > Date.now()) {
+    return cached.value;
+  }
+  cache.delete(key);
+  return null;
+};
+
+const invalidateCache = (keys = []) => {
+  keys.forEach((key) => cache.delete(key));
+};
+
 export const uploadSongWithFiles = async (songData, files) => {
-    try {
-        const formData = new FormData();
+  try {
+    const formData = new FormData();
+    Object.keys(songData).forEach((key) => {
+      formData.append(key, songData[key]);
+    });
+    if (files.audio) formData.append("audio", files.audio);
+    if (files.easyMidi) formData.append("easyMidi", files.easyMidi);
+    if (files.hardMidi) formData.append("hardMidi", files.hardMidi);
 
-        // Append song info
-        Object.keys(songData).forEach((key) => {
-            formData.append(key, songData[key]);
-        });
+    const response = await axiosInstance.post(`${API_URL}/upload`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
 
-        // Append files (ensure correct field name)
-        if (files.audio) formData.append("audio", files.audio);
-        if (files.easyMidi) formData.append("easyMidi", files.easyMidi);
-        if (files.hardMidi) formData.append("hardMidi", files.hardMidi);
+    invalidateCache(["allSongs"]);
 
-        // Debugging: Check formData
-        for (let [key, value] of formData.entries()) {
-            console.log(key, value);
-        }
-
-        // Send request
-        const response = await axios.post(`${API_URL}/upload`,  formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-        });
-
-        return response.data;
-    } catch (error) {
-        console.error("Error uploading song:", error);
-        throw error;
-    }
+    return response.data;
+  } catch (error) {
+    console.error("Error uploading song:", error);
+    throw error;
+  }
 };
 
-
-/**
- * Fetch all songs from the server.
- */
 export const getAllSongs = async () => {
-    try {
-        const response = await axios.get(`${API_URL}`);
-        return response.data;
-    } catch (error) {
-        console.error("Error fetching songs:", error);
-        throw error;
-    }
+  const cacheKey = "allSongs";
+  const cached = getCache(cacheKey);
+  if (cached) return cached;
+
+  try {
+    const response = await axiosInstance.get(`${API_URL}`);
+    setCache(cacheKey, response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching songs:", error);
+    throw error;
+  }
 };
 
-/**
- * Fetch a single song by ID.
- */
 export const getSongById = async (songId) => {
-    try {
-        const response = await axios.get(`${API_URL}/${songId}`);
-        return response.data;
-    } catch (error) {
-        console.error(`Error fetching song with ID ${songId}:`, error);
-        throw error;
-    }
+  const cacheKey = `song_${songId}`;
+  const cached = getCache(cacheKey);
+  if (cached) return cached;
+
+  try {
+    const response = await axiosInstance.get(`${API_URL}/${songId}`);
+    setCache(cacheKey, response.data);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching song with ID ${songId}:`, error);
+    throw error;
+  }
 };
 
-/**
- * Update an existing song.
- */
-export const updateSong = async (songId, songData, files = []) => {
-    try {
-        const formData = new FormData();
+export const updateSong = async (songId, songData, files = {}) => {
+  try {
+    const formData = new FormData();
+    Object.keys(songData).forEach((key) => {
+      formData.append(key, songData[key]);
+    });
+    if (files.audio) formData.append("audio", files.audio);
+    if (files.easyMidi) formData.append("easyMidi", files.easyMidi);
+    if (files.hardMidi) formData.append("hardMidi", files.hardMidi);
 
-        Object.keys(songData).forEach((key) => {
-            formData.append(key, songData[key]);
-        });
+    const response = await axiosInstance.put(`${API_URL}/${songId}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
 
-        // Append files (ensure correct field name)
-        if (files.audio) formData.append("audio", files.audio);
-        if (files.easyMidi) formData.append("easyMidi", files.easyMidi);
-        if (files.hardMidi) formData.append("hardMidi", files.hardMidi);
+    invalidateCache(["allSongs", `song_${songId}`]);
 
-        // Debugging: Check formData
-        for (let [key, value] of formData.entries()) {
-            console.log(key, value);
-        }
-        const response = await axios.put(`${API_URL}/${songId}`, formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-        });
+    return response.data;
+  } catch (error) {
+    console.error(`Error updating song with ID ${songId}:`, error);
+    throw error;
+  }
+};
 
-        return response.data;
-    } catch (error) {
-        console.error(`Error updating song with ID ${songId}:`, error);
-        throw error;
-    }
+export const deleteSong = async (songId) => {
+  try {
+    const response = await axiosInstance.delete(`${API_URL}/${songId}`);
+
+    invalidateCache(["allSongs", `song_${songId}`]);
+
+    return response.data;
+  } catch (error) {
+    console.error(`Error deleting song with ID ${songId}:`, error);
+    throw error;
+  }
 };

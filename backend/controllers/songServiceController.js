@@ -4,6 +4,7 @@ import multer from "multer";
 import crypto from "crypto";
 import { GridFsStorage } from "multer-gridfs-storage";
 import Song from "../models/songModel.js";
+import ScoreInfo from "../models/scoreInfoModel.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -20,7 +21,6 @@ db.once("open", () => {
     gfs.collection("uploads");
 });
 
-// GridFS Storage Configuration
 const storage = new GridFsStorage({
     url: process.env.MONGO_URI,
     file: (req, file) => {
@@ -43,19 +43,28 @@ storage.on("error", (err) => console.error("GridFS Storage Error:", err));
 
 const upload = multer({ storage });
 
-// Helper function to delete files from GridFS
 const deleteFile = async (fileUrl) => {
-    if (!fileUrl) return;
-    const filename = fileUrl.split("/uploads/")[1];
-    const file = await db.collection("uploads.files").findOne({ filename });
+    try {
+        if (!fileUrl) return;
 
-    if (file) {
-        await gridfsBucket.delete(file._id);
-        console.log(`Deleted old file: ${filename}`);
+        const filename = fileUrl.split("/uploads/")[1];
+        if (!filename) return;
+
+        const filesCollection = db.collection("uploads.files");
+        const fileDoc = await filesCollection.findOne({ filename });
+
+        if (!fileDoc) {
+            console.warn(`File not found in GridFS: ${filename}`);
+            return;
+        }
+
+        await gridfsBucket.delete(fileDoc._id);
+        console.log(`Deleted file: ${filename}`);
+    } catch (error) {
+        console.error("Error deleting file:", error);
     }
 };
 
-// Upload and Create Song
 export const createSongWithFiles = async (req, res) => {
     try {
         if (!req.files || Object.keys(req.files).length === 0) {
@@ -85,7 +94,6 @@ export const createSongWithFiles = async (req, res) => {
     }
 };
 
-// Get All Songs
 export const getAllSongs = async (req, res) => {
     try {
         console.log("Fetching all songs...");
@@ -98,7 +106,6 @@ export const getAllSongs = async (req, res) => {
     }
 };
 
-// Get Song by ID
 export const getSongById = async (req, res) => {
     try {
         console.log(`Fetching song with ID: ${req.params.id}`);
@@ -115,7 +122,6 @@ export const getSongById = async (req, res) => {
     }
 };
 
-// Update Song
 export const updateSong = async (req, res) => {
     try {
         const { id } = req.params;
@@ -149,7 +155,35 @@ export const updateSong = async (req, res) => {
     }
 };
 
-// Download File from GridFS
+export const deleteSong = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const song = await Song.findById(id);
+        if (!song) {
+            return res.status(404).json({ error: "Song not found" });
+        }
+
+        console.log(`Deleting song: ${song.songName}`);
+
+        await deleteFile(song.audioClip);
+        await deleteFile(song.easyMidi);
+        await deleteFile(song.hardMidi);
+
+        await Song.findByIdAndDelete(id);
+        console.log("Song record deleted");
+
+        const result = await ScoreInfo.deleteMany({ song_id: id });
+        console.log(`Deleted ${result.deletedCount} score records`);
+
+        res.json({ message: "Song, files, and related score data deleted successfully" });
+
+    } catch (error) {
+        console.error("Error deleting song:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+};
+
 export const downloadFile = (req, res) => {
     const { filename } = req.params;
     const downloadStream = gridfsBucket.openDownloadStreamByName(filename);
