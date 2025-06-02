@@ -1,60 +1,74 @@
-/* src/components/SideMenu.css */
+:root {
+  --primary-color: #fd7e14;
+  --primary-dark: #b35a00;
+  --text-color: #333333;
+  --bg-light: #f9f9f9;
+  --input-bg: #fff;
+  --input-border: #ddd;
+  --danger-color: #e55353;
+  --danger-hover: #c44444;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 .side-menu {
-    width: 220px;
-    min-height: 100vh;
-    background-color: #f8f9fa;
-    padding: 15px;
-    border-right: 1px solid #ddd;
-    transition: width 0.3s ease;
-  }
-  
-  .app-name {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 1.5em;
-    font-weight: bold;
-    color: #6c757d;
-  }
-  
-  .start-session-button {
-    background-color: #d3a4f3;
-    color: white;
-    font-size: 1.1em;
-    font-weight: bold;
-    margin-bottom: 20px;
-    width: 100%;
-    border: none;
-    transition: background-color 0.3s ease;
-  }
-  
-  .start-session-button:hover {
-    background-color: #c48aea;
-  }
-  
-  .menu-item {
-    display: flex;
-    align-items: center;
-    padding: 10px 15px;
-    margin-bottom: 10px;
-    font-size: 1em;
-    font-weight: bold;
-    color: #6c757d;
-    border-radius: 5px;
-    transition: background-color 0.3s ease, width 0.3s ease;
-  }
-  
-  .menu-item .icon {
-    margin-right: 10px;
-    font-size: 1.2em;
-  }
-  
-  .menu-item:hover {
-    background-color: #e9ecef;
-    color: #343a40;
-  }
-  
-  .menu-item.active {
-    background-color: #e9ecef;
-    color: #343a40;
-  }
-  
+  width: 220px;
+  min-height: 100vh;
+  background-color: var(--bg-light);
+  padding: 15px;
+  border-right: 1px solid var(--input-border);
+  transition: width 0.3s ease;
+  font-family: var(--font-family);
+  color: var(--text-color);
+}
+
+.app-name {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.5em;
+  font-weight: bold;
+  color: var(--primary-dark);
+}
+
+.start-session-button {
+  background-color: var(--primary-color);
+  color: white;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-bottom: 20px;
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.start-session-button:hover {
+  background-color: var(--primary-dark);
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  color: var(--text-color);
+  border-radius: 5px;
+  transition: background-color 0.3s ease, width 0.3s ease;
+}
+
+.menu-item .icon {
+  margin-right: 10px;
+  font-size: 1.2em;
+}
+
+.menu-item:hover {
+  background-color: #ffe7cc;
+  color: var(--primary-dark);
+}
+
+.menu-item.active {
+  background-color: #ffc488;
+  color: var(--primary-dark);
+}

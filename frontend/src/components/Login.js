@@ -89,7 +89,7 @@ function Login() {
         <Container className="login-container">
           <Row className="justify-content-center">
             <Col md={8} className="text-center">
-              <h2 style={{ color: '#4A4A4A', fontWeight: 'bold', marginBottom: '30px' }}>ÂM VỌNG NGÀN NĂM</h2>
+              <h2 style={{ color: '#4A4A4A', fontWeight: 'bold', marginBottom: '30px' }}>AVNN Account Center</h2>
               <h3 style={{ color: '#4A4A4A', marginBottom: '40px' }}>Welcome Back!</h3>
               <Form onSubmit={handleSubmit}>
                 <Form.Group controlId="email" style={{ marginBottom: '30px' }}>

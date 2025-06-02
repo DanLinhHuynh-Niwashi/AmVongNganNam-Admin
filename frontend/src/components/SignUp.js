@@ -50,9 +50,9 @@ function Signup() {
         <Row className="justify-content-center">
           <Col xs={12} md={8} className="text-center">
             <h2 style={{ color: "#4A4A4A", fontWeight: "bold", marginBottom: "30px" }}>
-              TRUNG TÂM TÀI KHOẢN
+              AVNN Account Center
             </h2>
-            <h3 style={{ color: "#4A4A4A", marginBottom: "40px" }}>Tạo tài khoản</h3>
+            <h3 style={{ color: "#4A4A4A", marginBottom: "40px" }}>Create Account</h3>
 
             {/* General error message */}
             {generalError && <Alert variant="danger">{generalError}</Alert>}
