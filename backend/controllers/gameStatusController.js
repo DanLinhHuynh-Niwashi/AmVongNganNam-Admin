@@ -71,11 +71,18 @@ export const updateGameStatus = async (req, res) => {
     }
 
     // Get current game status
-    const existingStatus = await GameStatus.findOne({ user_id: req.user.id });
+    let existingStatus = await GameStatus.findOne({ user_id: req.user.id });
 
     if (!existingStatus) {
-      console.log("Game status not found for user:", req.user.id);  // Debugging if no existing game status found
-      return res.status(404).json({ message: "Game status not found." });
+      const newGameRecord = new GameStatus({
+        user_id: req.user.id,
+        unlocked_songs: [],
+        unlocked_instruments: [],
+        highscore: []
+      });
+      await newGameRecord.save();
+      existingStatus = newGameRecord;
+      console.log("Game status not found for user, creating:", req.user.id);  // Debugging if no existing game status found
     }
 
     // Prepare merged highscore (no duplicates)
