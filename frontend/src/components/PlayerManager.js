@@ -229,8 +229,6 @@ const PlayerManager = () => {
                     selectedPlayerStatus.highscore.map((score, index) => (
                       <div key={score._id || index} className="mb-3 ps-2 border-start border-3 border-warning">
                         <p><strong>Song:</strong> {score.song_id?.songName} ({score.song_id?.genre})</p>
-                        <p><strong>Composer:</strong> {score.song_id?.composer}</p>
-                        <p><strong>BPM:</strong> {score.song_id?.bpm}</p>
                         <p><strong>Easy Score:</strong> {score.easyScore} ({score.easyState})</p>
                         <p><strong>Hard Score:</strong> {score.hardScore} ({score.hardState})</p>
                       </div>

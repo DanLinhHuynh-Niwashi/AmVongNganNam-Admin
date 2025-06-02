@@ -150,7 +150,7 @@ export const loadGameStatusById = async (req, res) => {
         path: "highscore",
         populate: {
           path: "song_id",
-          select: "songName composer genre bpm",
+          select: "songName genre",
         },
       })
       .lean()
