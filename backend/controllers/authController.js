@@ -4,6 +4,7 @@ import ScoreInfo from "../models/scoreInfoModel.js";
 import Ban from "../models/banModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+
 import {
   validationResult
 }
@@ -133,10 +134,7 @@ export const login = async(req, res) =>{
 
     if (activeBan) {
       return res.status(403).json({
-        message: `Your account is currently banned: 
-        ${activeBan.reason}
-        ${activeBan.expiresAt ? `. Ban expires at 
-        ${activeBan.expiresAt.toISOString()}` : " (permanent ban)"}.`,
+        message: `Your account is currently banned: ${activeBan.reason}${activeBan.expiresAt ? `. Ban expires at ${activeBan.expiresAt.toISOString()}` : " (permanent ban)"}.`,
         reason: activeBan.reason,
         expiresAt: activeBan.expiresAt || null
       });
@@ -418,6 +416,25 @@ export const getUserInfo = async(req, res) =>{
     console.log(error.message);
     res.status(403).json({
       message: "Invalid token"
+    });
+  }
+};
+
+export const getAllPlayerAccounts = async (req, res) => {
+  try {
+    // Fetch all accounts where isAdmin is false
+    const players = await Account.find({ isAdmin: false }).select("-password"); // exclude password from results
+
+    res.status(200).json({
+      success: true,
+      players,
+    });
+  } catch (error) {
+    console.error("Error fetching players:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error.",
+      error: error.message,
     });
   }
 };

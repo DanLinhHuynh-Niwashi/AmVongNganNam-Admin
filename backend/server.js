@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import songRoutes from "./routes/songRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import gameStatusRoutes from "./routes/gameStatusRoutes.js";
+import playerRoutes from "./routes/playerRoutes.js";
 dotenv.config();
 connectDB();
 
@@ -25,5 +26,6 @@ app.use(
 app.use("/api/songs", songRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/game-status", gameStatusRoutes);
+app.use("/api/player", playerRoutes);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

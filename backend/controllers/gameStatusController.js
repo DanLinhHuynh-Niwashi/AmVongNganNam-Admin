@@ -1,9 +1,10 @@
 import GameStatus from "../models/gameStatusModel.js";
 import ScoreInfo from '../models/scoreInfoModel.js';
+import mongoose from "mongoose";
 
 export const loadGameStatus = async (req, res) => {
   try {
-    console.log("Finding game status for user: " + JSON.stringify(req.user));  // Debugging user info
+    console.log("Finding game status for user: " + JSON.stringify(req.user));
 
     const gameStatus = await GameStatus.findOne({ user_id: req.user.id })
       .populate({
@@ -12,11 +13,11 @@ export const loadGameStatus = async (req, res) => {
       .exec();
 
     if (!gameStatus) {
-      console.log("Game status not found for user: " + req.user.id);  // Debugging if status isn't found
+      console.log("Game status not found for user: " + req.user.id);
       return res.status(404).json({ message: "Game status not found." });
     }
 
-    console.log("Game status found:", JSON.stringify(gameStatus));  // Debugging the game status found
+    console.log("Game status found:", JSON.stringify(gameStatus));
     res.json(gameStatus);
   } catch (error) {
     console.error("Error loading game status:", error);  // Debugging error
@@ -127,6 +128,41 @@ export const deleteGameStatus = async (req, res) => {
     res.json({ message: "Game status and associated scores deleted successfully." });
   } catch (error) {
     console.error("Error deleting game status:", error);  // Debugging error
+    res.status(500).json({ message: "Server error.", error: error.message });
+  }
+};
+
+export const loadGameStatusById = async (req, res) => {
+  try {
+    const { userId } = req.params; // id = user ID
+    console.log(userId)
+    // Validate user ID
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid user ID." });
+    }
+
+    const gameStatus = await GameStatus.findOne({ user_id: userId })
+      .populate({
+        path: "user_id",
+        select: "name email",
+      })
+      .populate({
+        path: "highscore",
+        populate: {
+          path: "song_id",
+          select: "songName composer genre bpm",
+        },
+      })
+      .lean()
+      .exec();
+
+    if (!gameStatus) {
+      return res.status(404).json({ message: "GameStatus not found for this user." });
+    }
+
+    res.json(gameStatus);
+  } catch (error) {
+    console.error("Error loading game status by user ID:", error);
     res.status(500).json({ message: "Server error.", error: error.message });
   }
 };
