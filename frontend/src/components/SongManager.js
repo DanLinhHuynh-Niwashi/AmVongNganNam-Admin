@@ -23,6 +23,7 @@ const SongManager = () => {
     genre: "",
     bpm: "",
     info: "",
+    isDefault: false
   });
   const [files, setFiles] = useState({
     audio: null,
@@ -53,6 +54,7 @@ const SongManager = () => {
   const handleSongClick = async (songId) => {
     try {
       const song = await getSongById(songId);
+      console.log(song)
       setSelectedSong(song);
       setSongData({
         songName: song.songName || "",
@@ -60,6 +62,7 @@ const SongManager = () => {
         genre: song.genre || "",
         bpm: song.bpm || "",
         info: song.info || "",
+        isDefault: song.isDefault || false
       });
       setFiles({ audio: null, easyMidi: null, hardMidi: null });
       if (song.audioClip) {
@@ -77,8 +80,10 @@ const SongManager = () => {
   };
 
   const handleChange = (e) => {
-    setSongData({ ...songData, [e.target.name]: e.target.value });
+    const { name, value, type, checked } = e.target;
+    setSongData({ ...songData, [name]: type === "checkbox" ? checked : value });
   };
+
 
   const handleFileChange = (e, type) => {
     const file = e.target.files[0];
@@ -151,7 +156,7 @@ const SongManager = () => {
 
   const clearSelection = () => {
     setSelectedSong(null);
-    setSongData({ songName: "", composer: "", genre: "", bpm: "", info: "" });
+    setSongData({ songName: "", composer: "", genre: "", bpm: "", info: "", isDefault: false });
     setFiles({ audio: null, easyMidi: null, hardMidi: null });
     setAudioPreview(null);
   };
@@ -280,7 +285,15 @@ const SongManager = () => {
               rows={4}
             />
           </Form.Group>
-
+          <Form.Group className="mb-3" controlId="isDefault">
+            <Form.Check
+              type="checkbox"
+              label="Mark as Default Song"
+              name="isDefault"
+              checked={songData.isDefault}
+              onChange={handleChange}
+            />
+          </Form.Group>
           <Form.Group className="mb-3" controlId="audioFile">
             <Row className="align-items-center">
               <Col xs="auto">

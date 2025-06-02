@@ -11,6 +11,7 @@ const songSchema = new mongoose.Schema({
     hardMidi: { type: String }, // URL from GridFS
     hardNoteTimings: { type: [Number], default: [] },
     easyNoteTimings: { type: [Number], default: [] },
+    isDefault: {type: Boolean, default: false}
 });
 
 const Song = mongoose.model("Song", songSchema, "SongInfo");

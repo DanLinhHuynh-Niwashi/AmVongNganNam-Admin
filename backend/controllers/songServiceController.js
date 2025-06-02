@@ -82,6 +82,7 @@ export const createSongWithFiles = async (req, res) => {
             audioClip: req.files.audio ? `/uploads/${req.files.audio[0].filename}` : null,
             easyMidi: req.files.easyMidi ? `/uploads/${req.files.easyMidi[0].filename}` : null,
             hardMidi: req.files.hardMidi ? `/uploads/${req.files.hardMidi[0].filename}` : null,
+            isDefault: req.body.isDefault
         });
 
         await newSong.save();
@@ -141,6 +142,7 @@ export const updateSong = async (req, res) => {
         song.genre = req.body.genre || song.genre;
         song.bpm = req.body.bpm || song.bpm;
         song.info = req.body.info || song.info;
+        song.isDefault = req.body.isDefault || song.isDefault;
         if (req.files.audio) song.audioClip = `/uploads/${req.files.audio[0].filename}`;
         if (req.files.easyMidi) song.easyMidi = `/uploads/${req.files.easyMidi[0].filename}`;
         if (req.files.hardMidi) song.hardMidi = `/uploads/${req.files.hardMidi[0].filename}`;
