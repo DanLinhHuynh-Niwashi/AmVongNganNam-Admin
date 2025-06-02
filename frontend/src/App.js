@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import useAuth from "./hooks/useAuth";
 import SideMenu from "./components/SideMenu";
 import SongManager from "./components/SongManager";
+import PlayerManager from "./components/PlayerManager";
 import Signup from "./components/SignUp";
 import Login from "./components/Login";
 import "./App.css";
@@ -39,6 +40,7 @@ const App = () => {
                 {isAdmin ? (
                   <>
                     <Route path="/songs" element={<SongManager />} />
+                    <Route path="/players" element={<PlayerManager />} />
                     <Route path="*" element={<Navigate to="/songs" />} />
                   </>
                 ) : (

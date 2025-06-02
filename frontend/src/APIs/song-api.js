@@ -15,6 +15,9 @@ const setCache = (key, value, ttl = 300000) => {
   cache.set(key, { value, expires });
 };
 
+export const clearCache = () => {
+  cache.clear();
+}
 const getCache = (key) => {
   const cached = cache.get(key);
   if (cached && cached.expires > Date.now()) {

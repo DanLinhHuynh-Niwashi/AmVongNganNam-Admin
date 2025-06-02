@@ -1,0 +1,222 @@
+:root {
+  --primary-color: #fd7e14;
+  --primary-dark: #b35a00;
+  --text-color: #333333;
+  --bg-light: #f9f9f9;
+  --input-bg: #fff;
+  --input-border: #ddd;
+  --danger-color: #e55353;
+  --danger-color-light: #ffaeae;
+  --danger-hover: #c44444;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.player-manager {
+  max-width: 1200px;
+  margin: 3rem auto;
+  padding: 2rem 2.5rem;
+  font-family: var(--font-family);
+  color: var(--text-color);
+}
+
+.player-manager h1 {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  border-bottom: 3px solid var(--primary-color);
+  padding-bottom: 0.3rem;
+}
+
+.player-manager .d-flex.flex-wrap.gap-4 {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px var(--shadow);
+  padding: 1.5rem;
+}
+
+.player-list {
+  flex: 1;
+  max-width: 600px;
+  border-right: 3px solid var(--primary-color);
+  padding-right: 1.5rem;
+  overflow-y: auto;
+  max-height: 75vh;
+}
+
+.player-list h4 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--primary-dark);
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.5rem;
+}
+
+.player-list .list-group-item {
+  cursor: pointer;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.4rem;
+  border-radius: 10px;
+  background-color: var(--bg-light);
+  transition: background-color 0.3s ease, transform 0.2s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.player-list .list-group-item:hover {
+  background-color: #ffe7cc;
+  transform: translateX(2px);
+}
+
+.player-list .list-group-item.active {
+  background-color: #ffc488;
+  font-weight: 600;
+  color: var(--primary-dark);
+  border-color: #fff;
+}
+
+.player-details {
+  flex: 2;
+  max-width: 600px;
+  padding-left: 1.5rem;
+}
+
+.player-details h4 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--primary-dark);
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.5rem;
+}
+
+.player-details p {
+  margin-bottom: 0.5rem;
+}
+
+.player-details strong {
+  color: var(--primary-dark);
+}
+
+.player-details .alert-danger {
+  background-color: var(--danger-color);
+  color: white;
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+}
+
+.player-details .alert-danger em {
+  font-style: italic;
+  font-weight: 500;
+}
+
+.player-details .alert-danger .btn {
+  font-size: 0.85rem;
+}
+
+.player-details .btn-danger,
+.player-details .btn-warning {
+  font-weight: 600;
+  border-radius: 8px;
+  box-shadow: 0 3px 8px rgba(253, 126, 20, 0.25);
+}
+
+.player-details hr {
+  margin: 1.5rem 0;
+  border-color: #eee;
+}
+
+.player-details h5,
+.player-details h6 {
+  color: var(--primary-dark);
+  font-weight: 600;
+}
+
+.player-details .mb-3.ps-2 {
+  background-color: var(--bg-light);
+  border-left: 5px solid var(--primary-color);
+  padding-left: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+}
+
+.player-details .mb-3.ps-2 p {
+  margin-bottom: 0.2rem;
+}
+
+.spinner-border {
+  color: var(--primary-color);
+}
+
+/* Buttons inside modals */
+.modal-footer .btn-secondary {
+  background-color: #ddd;
+  border: none;
+  color: var(--text-color);
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  box-shadow: none;
+}
+
+.modal-footer .btn-danger {
+  background-color: var(--danger-color);
+  border: none;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  box-shadow: 0 4px 15px rgba(229, 83, 83, 0.4);
+  transition: background-color 0.3s ease;
+}
+
+.modal-footer .btn-danger:hover {
+  background-color: var(--danger-hover);
+  box-shadow: 0 6px 20px rgba(196, 68, 68, 0.6);
+}
+
+.form-control {
+  border-radius: 10px;
+  border: 2px solid var(--input-border);
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 8px rgba(253, 126, 20, 0.5);
+  outline: none;
+}
+
+.ban-alert {
+  border-color: var(--danger-color);
+  border-width: 2px;
+  background-color: white;
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+  font-weight: 600;
+}
+
+.ban-alert strong{
+  color:var(--danger-color);
+}
+
+/* Scrollbar styles for player list */
+.player-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.player-list::-webkit-scrollbar-track {
+  background: var(--bg-light);
+  border-radius: 10px;
+}
+
+.player-list::-webkit-scrollbar-thumb {
+  background-color: var(--primary-color);
+  border-radius: 10px;
+}
+

@@ -1,5 +1,6 @@
 import axios from "axios";
-
+import { clearCache as clearSongCache} from "./song-api";
+import { clearCache as clearPlayerCache} from "./player-api";
 const API_URL = process.env.REACT_APP_API_URL
   ? `${process.env.REACT_APP_API_URL}/api/auth`
   : `http://localhost:${process.env.REACT_APP_SERVER_PORT || 5000}/api/auth`;
@@ -38,6 +39,8 @@ export const login = async (credentials) => {
 export const logout = async () => {
   const response = await axios.post(`${API_URL}/logout`, {}, { withCredentials: true });
   cache.clear();
+  clearSongCache();
+  clearPlayerCache();
   return response;
 };
 

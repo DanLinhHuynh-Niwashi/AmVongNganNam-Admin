@@ -25,7 +25,12 @@ const SideMenu = ({isAdmin}) => {
       <Nav className="flex-column">
         {isAdmin &&
         <Nav.Link className="menu-item" onClick={() => navigate('/songs')}>
-          <FaMusic className="icon" /> Song List
+          <FaMusic className="icon" /> Song Manager
+        </Nav.Link>
+        }
+        {isAdmin &&
+        <Nav.Link className="menu-item" onClick={() => navigate('/players')}>
+          <FaUser className="icon" /> Player Manager
         </Nav.Link>
         }
         <Nav.Link className="menu-item" onClick={() => navigate('/account')}>

@@ -1,6 +1,6 @@
 import { login, resetPassword } from "../APIs/auth-api";
 import { useNavigate } from "react-router-dom";
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Modal, Button, Form, Container, Row, Col } from 'react-bootstrap';
 import './Login.css';
 
@@ -10,7 +10,7 @@ function Login() {
   const [resetSuccess, setResetSuccess] = useState(false);
   const [sendingEmail, setSendingEmail] = useState(false);
 
-  const handleShowForgetPassword = () => setShowModal(true);
+  //const handleShowForgetPassword = () => setShowModal(true);
   const handleCloseForgetPassword = () => {
     setResetSuccess(false)
     setShowModal(false);
@@ -27,7 +27,7 @@ function Login() {
       const response = await login(loginInfo);
       if (response.status !== 200) {
         console.log(response)
-        alert(`Login credentials incorrect`);
+        alert(response?.data?.message);
       } else {
         console.log(response)
         navigate('/login', { replace: true });
@@ -35,7 +35,7 @@ function Login() {
       }
     } catch (err) {
       console.log(err);
-      alert(`Error connecting to the server. Please try again later.`);
+      alert(err.response?.data?.message || err.message);
     }
   }
 
@@ -110,7 +110,7 @@ function Login() {
                     onChange={e => setLogin({ ...loginInfo, password: e.target.value })}
                   />
                 </Form.Group>
-                <div style={{ textAlign: "left", marginBottom: "30px", marginLeft: "8px" }}>
+                {/* <div style={{ textAlign: "left", marginBottom: "30px", marginLeft: "8px" }}>
                   <span
                     style={{
                       color: "#A9A9A9",
@@ -122,7 +122,7 @@ function Login() {
                   >
                     Forgot Password?
                   </span>
-                </div>
+                </div> */}
                 <Button type="submit" className="mt-3 mb-4 custom-button">
                   LOGIN
                 </Button>
