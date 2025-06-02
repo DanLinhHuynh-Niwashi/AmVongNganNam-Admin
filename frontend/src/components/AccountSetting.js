@@ -57,7 +57,8 @@ export default function AccountSettings() {
     try {
       await deleteAccount();
       await logout();
-      navigate("/login");
+      navigate('/login', { replace: true });
+      window.location.reload(); 
     } catch {
       setMessage("Account deletion failed.");
     }

@@ -19,15 +19,26 @@ export const validateSignup = [
   }),
 ];
 
+export const validateChangePassword = [
+  body("newPassword").custom((value) => {
+    const { isValid, error } = _validatePassword(value);
+    if (!isValid) {
+      console.log("invalid")
+      throw new Error(error);
+    }
+    return true;
+  }),
+];
+
 authRoutes.post("/signup", validateSignup, signup);
 authRoutes.post("/login", login);
 authRoutes.post("/logout", logout);
 authRoutes.post("/reset-password", resetPassword);
-authRoutes.post("/change-password", verifyToken, changePassword);
+authRoutes.post("/change-password", verifyToken, validateChangePassword, changePassword);
 authRoutes.post("/change-info", verifyToken, changeAccountInfo);
 authRoutes.get("/account-info", getUserInfo);
 authRoutes.get("/me", getUser);
-authRoutes.delete("/", deleteAccount);
+authRoutes.delete("/", verifyToken, deleteAccount);
 authRoutes.post("/admin-only", verifyToken, isAdmin, (req, res) => {
   res.json({ message: "Admin access granted." });
 });

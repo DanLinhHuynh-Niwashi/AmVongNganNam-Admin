@@ -1,4 +1,5 @@
 import { signup } from "../APIs/auth-api";
+import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import { Button, Form, Container, Row, Col, Alert } from "react-bootstrap";
 import "./Login.css";
@@ -12,7 +13,7 @@ function Signup() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({}); // Store field-specific errors
   const [generalError, setGeneralError] = useState(""); // General error message
-
+  const navigate = useNavigate()
   const handleSubmit = async (event) => {
     event.preventDefault();
     setErrors({});
@@ -26,10 +27,12 @@ function Signup() {
     try {
       await signup(details); // Axios request
       alert("Successfully created an account. Please log in!");
+      navigate('/login', { replace: true });
+      window.location.reload(); 
     } catch (err) {
       const responseErrors = err.response?.data?.errors || [];
       const formattedErrors = {};
-      console.log(responseErrors);
+      console.log(err.response);
       // If the backend returns multiple field errors
       responseErrors.forEach((error) => {
         formattedErrors[error.field] = error.message;

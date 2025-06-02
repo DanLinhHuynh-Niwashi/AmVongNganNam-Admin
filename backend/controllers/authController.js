@@ -67,25 +67,35 @@ export const signup = async(req, res) =>{
       password: hashedPassword
     });
     await newUser.save();
-    if (!newUser.isAdmin) {
-      const newGameRecord = new GameStatus({
-        user_id: newUser._id,
-        unlocked_songs: [],
-        unlocked_instruments: [],
-        highscore: []
-      });
-      await newGameRecord.save();
-    }
+    try {
+      // Only create game record if not admin
+      if (!newUser.isAdmin) {
+        const newGameRecord = new GameStatus({
+          user_id: newUser._id,
+          unlocked_songs: [],
+          unlocked_instruments: [],
+          highscore: []
+        });
+        await newGameRecord.save();
+      }
 
-    res.status(201).json({
-      success: true,
-      message: "Account created successfully.",
-      user: {
-        id: newUser._id,
-        name: newUser.name,
-        email: newUser.email
-      },
-    });
+      res.status(201).json({
+        success: true,
+        message: "Account created successfully.",
+        user: {
+          id: newUser._id,
+          name: newUser.name,
+          email: newUser.email
+        },
+      });
+    } catch (gameStatusError) {
+      await Account.findByIdAndDelete(newUser._id);
+      return res.status(500).json({
+        success: false,
+        message: "Signup failed while initializing game status. Account rolled back.",
+        error: gameStatusError.message
+      });
+    }
   } catch(error) {
     res.status(500).json({
       success: false,
@@ -224,6 +234,15 @@ export async function resetPassword(req, res) {
 };
 
 export const changePassword = async(req, res) =>{
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      success: false,
+      message: `Validation failed. ${errors.array()[0].msg}`,
+    });
+  }
+
   const {
     currentPassword,
     newPassword
