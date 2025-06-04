@@ -135,7 +135,7 @@ export const login = async(req, res) =>{
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "Strict",
+      sameSite: "None",
     });
 
     res.json({
@@ -294,7 +294,7 @@ export const deleteAccount = async(req, res) =>{
     res.clearCookie("token", {
       httpOnly: true,
       secure: true,
-      sameSite: "Strict"
+      sameSite: "None",
     });
 
     res.status(200).json({
@@ -330,7 +330,7 @@ export const getUser = async(req, res) =>{
       res.clearCookie("token", {
         httpOnly: true,
         secure: true,
-        sameSite: "Strict"
+        sameSite: "None",
       });
       return res.status(404).json({
         message: "Không tìm thấy người dùng."
@@ -365,7 +365,7 @@ export const getUserInfo = async(req, res) =>{
       res.clearCookie("token", {
         httpOnly: true,
         secure: true,
-        sameSite: "Strict"
+        sameSite: "None",
       });
       return res.status(404).json({
         message: "Không tìm thấy người dùng."

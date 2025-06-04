@@ -10,18 +10,29 @@ import playerRoutes from "./routes/playerRoutes.js";
 dotenv.config();
 connectDB();
 
+const allowedOrigins = [process.env.PAGE_URL, process.env.GAME_URL].filter(Boolean);
+
 const app = express();
 
 app.use(express.json());
 app.use(cookieParser()); 
+
+
 app.use(
-    cors({
-      origin: (origin, callback) => {
-        callback(null, true); // Allow any origin
-      },
-      credentials: true,
-    })
-  );
+  cors({
+    origin: (origin, callback) => {
+      const allowAll = allowedOrigins.length === 0;
+
+      if (allowAll || !origin || allowedOrigins.includes(origin)) {
+        callback(null, true); // Cho phép
+      } else {
+        callback(new Error('Not allowed by CORS')); // Từ chối
+      }
+    },
+    credentials: true,
+  })
+);
+
   
 app.use("/api/songs", songRoutes);
 app.use("/api/auth", authRoutes);

@@ -41,7 +41,7 @@ export const verifyToken = async(req, res, next) =>{
       res.clearCookie("token", {
         httpOnly: true,
         secure: true,
-        sameSite: "Strict"
+        sameSite: "None",
       });
       return res.status(404).json({
         message: "Không tìm thấy người dùng."
