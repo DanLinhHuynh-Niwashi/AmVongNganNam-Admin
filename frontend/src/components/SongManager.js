@@ -6,11 +6,13 @@ import {
   getSongById,
   uploadSongWithFiles,
   updateSong,
-  deleteSong, // <-- Make sure to implement this API call
+  deleteSong,
 } from "../APIs/song-api.js";
 import "./SongManager.css";
 
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = process.env.REACT_APP_API_URL
+  ? `${process.env.REACT_APP_API_URL}`
+  : `http://localhost:${process.env.REACT_APP_SERVER_PORT || 5000}`;;
 
 const extractFilename = (path) => path?.split("/uploads/")[1];
 
@@ -45,7 +47,7 @@ const SongManager = () => {
       setSongs(data);
     } catch (error) {
       console.error("Error fetching songs:", error);
-      alert("Failed to load songs.");
+      alert("Tải bài hát thất bại.");
     } finally {
       setLoading(false);
     }
@@ -75,7 +77,7 @@ const SongManager = () => {
       }
     } catch (error) {
       console.error("Error fetching song details:", error);
-      alert("Failed to load song details.");
+      alert("Lấy chi tiết bài hát thất bại.");
     }
   };
 
@@ -102,45 +104,45 @@ const SongManager = () => {
     e.preventDefault();
     setIsUploading(true);
     if (!songData.songName.trim()) {
-      alert("Please enter a song name.");
+      alert("Nhập tên bài hát.");
       setIsUploading(false);
       return;
     }
     try {
       if (selectedSong) {
         await updateSong(selectedSong._id, songData, files);
-        alert("Song updated successfully!");
+        alert("Cập nhật bài hát thành công!");
       } else {
         await uploadSongWithFiles(songData, files);
-        alert("Song uploaded successfully!");
+        alert("Thêm bài hát thành công!");
       }
       clearSelection();
       fetchSongs();
     } catch (error) {
       console.error("Error:", error);
-      alert("Failed to process song: " + error.response.data.message);
+      alert("Xử lý thất bại: " + error.response.data.message);
     }
     setIsUploading(false);
   };
 
   const handleDelete = async (song) => {
-    if (!window.confirm(`Are you sure you want to delete "${song.songName}"?`))
+    if (!window.confirm(`Bạn đang xóa bài hát "${song.songName}"?`))
       return;
     try {
       await deleteSong(song._id);
-      alert("Song deleted successfully!");
+      alert("Xóa bài hát thành công!");
       clearSelection();
       fetchSongs();
     } catch (error) {
       console.error("Delete error:", error);
-      alert("Failed to delete song: " + error.response.data.message);
+      alert("Xóa bài hát thất bại: " + error.response.data.message);
     }
   };
 
   const downloadFromServer = async (filename) => {
     try {
       const response = await fetch(`${BASE_URL}/api/songs/file/${filename}`);
-      if (!response.ok) throw new Error("Download failed");
+      if (!response.ok) throw new Error(response.message);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -150,7 +152,7 @@ const SongManager = () => {
       window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error("Download error:", err);
-      alert("Could not download file.");
+      alert("Không thể tải bài hát.");
     }
   };
 
@@ -165,7 +167,7 @@ const SongManager = () => {
     return (
       <div className="d-flex justify-content-center align-items-center vh-100">
         <div className="spinner-border text-warning" role="status">
-          <span className="visually-hidden">Loading...</span>
+          <span className="visually-hidden">Đang tải...</span>
         </div>
       </div>
     );
@@ -173,11 +175,11 @@ const SongManager = () => {
 
   return (
     <div className="song-manager">
-      <h1>Song Manager</h1>
+      <h1>Quản lý Bài hát</h1>
       <div className="content">
       {/* Song List */}
       <div className="song-list">
-        <h2>Song List</h2>
+        <h2>Danh sách Bài hát</h2>
         <div>
           <Button
             variant="outline-warning"
@@ -185,11 +187,11 @@ const SongManager = () => {
             onClick={clearSelection}
             style={{ fontWeight: "600" }}
           >
-            + Upload New Song
+            + Thêm Bài hát
           </Button>
         </div>
           <ul>
-            {songs.length === 0 && <li>No songs found</li>}
+            {songs.length === 0 && <li>Không có bài hát nào</li>}
             {songs.map((song) => (
               <li
                 key={song._id}
@@ -208,8 +210,8 @@ const SongManager = () => {
                     handleDelete(song);
                   }}
                   className="delete-btn"
-                  title="Delete Song"
-                  aria-label={`Delete ${song.songName}`}
+                  title="Xóa bài hát"
+                  aria-label={`Xóa ${song.songName}`}
                 >
                   <FaTrashAlt size={18} />
                 </button>
@@ -220,12 +222,12 @@ const SongManager = () => {
 
       {/* Song Upload/Edit Form */}
       <div className="song-form">
-        <h2>{selectedSong ? "Edit Song" : "Upload a New Song"}</h2>
+        <h2>{selectedSong ? "Chỉnh sửa bài hát" : "Thêm bài hát"}</h2>
         <Form onSubmit={handleSubmit}>
           {selectedSong && (
             <Form.Group className="mb-3" controlId="songId">
               <Form.Label>
-                <strong>Song ID:</strong>
+                <strong>ID Bài hát:</strong>
               </Form.Label>
               <Form.Control type="text" value={selectedSong._id} disabled />
             </Form.Group>
@@ -235,7 +237,7 @@ const SongManager = () => {
             <Form.Control
               type="text"
               name="songName"
-              placeholder="Song Name"
+              placeholder="Tên bài hát"
               value={songData.songName}
               onChange={handleChange}
               required
@@ -246,7 +248,7 @@ const SongManager = () => {
             <Form.Control
               type="text"
               name="composer"
-              placeholder="Composer"
+              placeholder="Tác giả"
               value={songData.composer}
               onChange={handleChange}
               required
@@ -257,7 +259,7 @@ const SongManager = () => {
             <Form.Control
               type="text"
               name="genre"
-              placeholder="Genre"
+              placeholder="Thể loại"
               value={songData.genre}
               onChange={handleChange}
               required
@@ -279,7 +281,7 @@ const SongManager = () => {
             <Form.Control
               as="textarea"
               name="info"
-              placeholder="Additional Info"
+              placeholder="Thông tin thêm"
               value={songData.info}
               onChange={handleChange}
               rows={4}
@@ -288,7 +290,7 @@ const SongManager = () => {
           <Form.Group className="mb-3" controlId="isDefault">
             <Form.Check
               type="checkbox"
-              label="Mark as Default Song"
+              label="Đây là bài hát mặc định"
               name="isDefault"
               checked={songData.isDefault}
               onChange={handleChange}
@@ -298,14 +300,14 @@ const SongManager = () => {
             <Row className="align-items-center">
               <Col xs="auto">
                 <Form.Label>
-                  <strong>Audio File:</strong>
+                  <strong>Tệp âm thanh:</strong>
                 </Form.Label>
               </Col>
               <Col>
                 {audioPreview && (
                   <audio controls style={{ width: "100%", height: "30px" }}>
                     <source src={audioPreview} />
-                    Your browser does not support the audio element.
+                    Trình duyệt không hỗ trợ tệp âm thanh.
                   </audio>
                 )}
               </Col>
@@ -326,14 +328,14 @@ const SongManager = () => {
                   downloadFromServer(extractFilename(selectedSong.audioClip))
                 }
               >
-                Download Audio File
+                Tải tệp âm thanh
               </Button>
             )}
           </Form.Group>
 
           <Form.Group className="mb-3" controlId="easyMidiFile">
             <Form.Label>
-              <strong>Easy MIDI File (.bytes):</strong>
+              <strong>Tệp MIDI chế độ Dễ (.bytes):</strong>
             </Form.Label>
             <Form.Control
               type="file"
@@ -351,14 +353,14 @@ const SongManager = () => {
                   downloadFromServer(extractFilename(selectedSong.easyMidi))
                 }
               >
-                Download Easy MIDI
+                Tải tệp MIDI
               </Button>
             )}
           </Form.Group>
 
           <Form.Group className="mb-3" controlId="hardMidiFile">
             <Form.Label>
-              <strong>Hard MIDI File (.bytes):</strong>
+              <strong>Tệp MIDI chế độ Khó (.bytes):</strong>
             </Form.Label>
             <Form.Control
               type="file"
@@ -376,7 +378,7 @@ const SongManager = () => {
                   downloadFromServer(extractFilename(selectedSong.hardMidi))
                 }
               >
-                Download Hard MIDI
+                Tải tệp MIDI
               </Button>
             )}
           </Form.Group>
@@ -388,10 +390,10 @@ const SongManager = () => {
             style={{ fontWeight: "700", fontSize: "1.1rem" }}
           >
             {isUploading
-              ? "Processing..."
+              ? "Đang xử lý..."
               : selectedSong
-              ? "Update Song"
-              : "Upload Song"}
+              ? "Cập nhật bài hát"
+              : "Thêm bài hát"}
           </Button>
         </Form>
       </div>

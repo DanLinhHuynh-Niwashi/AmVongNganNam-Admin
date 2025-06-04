@@ -24,7 +24,7 @@ export default function AccountSettings() {
         setUser(res.data.user);
         setFormData({ name: res.data.user.name, email: res.data.user.email });
       } catch {
-        setMessage("Unable to fetch user info.");
+        setMessage("Không thể lấy thông tin người dùng.");
       }
     }
     fetchUser();
@@ -34,56 +34,57 @@ export default function AccountSettings() {
     e.preventDefault();
     try {
       await changeAccountInfo({ newName: formData.name, newEmail: formData.email });
-      setMessage("Account info updated.");
+      setMessage("Đã cập nhật thông tin tài khoản.");
       setEditing(false);
     } catch (err) {
-      setMessage(err.response?.data?.message || "Update failed.");
+      setMessage(err.response?.data?.message || "Cập nhật thất bại.");
     }
   };
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
     try {
-      await changePassword(passwordData);
-      setMessage("Password changed.");
+      var response = await changePassword(passwordData);
+      if (!response.ok) throw Error (response.message)
+      setMessage("Đã thay đổi mật khẩu.");
       setPasswordData({ currentPassword: "", newPassword: "" });
     } catch (err) {
-      setMessage(err.response?.data?.message || "Password change failed.");
+      setMessage(err.response?.data?.message || "Thay đổi mật khẩu thất bại.");
     }
   };
 
   const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete your account? This action is irreversible.")) return;
+    if (!window.confirm("Bạn có chắc muốn xóa tài khoản không? Hành động này không thể hoàn tác.")) return;
     try {
       await deleteAccount();
       await logout();
       navigate('/login', { replace: true });
-      window.location.reload(); 
+      window.location.reload();
     } catch {
-      setMessage("Account deletion failed.");
+      setMessage("Xóa tài khoản thất bại.");
     }
   };
 
   return (
     <div className="account-settings">
-      <h1>Account Settings</h1>
+      <h1>Cài Đặt Tài Khoản</h1>
 
       {message && <div className="message">{message}</div>}
 
-      {/* User Info */}
+      {/* Thông tin người dùng */}
       <section>
-        <h3>Account Info</h3>
+        <h3>Thông Tin Tài Khoản</h3>
         {!editing ? (
           <>
-            <p><strong>Name:</strong> {formData.name}</p>
+            <p><strong>Tên hiển thị:</strong> {formData.name}</p>
             <p><strong>Email:</strong> {formData.email}</p>
-            <button onClick={() => setEditing(true)} className="edit-btn">Edit Info</button>
+            <button onClick={() => setEditing(true)} className="edit-btn">Chỉnh sửa</button>
           </>
         ) : (
           <form onSubmit={handleInfoChange}>
             <input
               type="text"
-              placeholder="Name"
+              placeholder="Tên hiển thị"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             />
@@ -94,38 +95,38 @@ export default function AccountSettings() {
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             />
             <div className="btn-group">
-              <button type="submit" className="save-btn">Save</button>
-              <button type="button" onClick={() => setEditing(false)} className="cancel-btn">Cancel</button>
+              <button type="submit" className="save-btn">Lưu</button>
+              <button type="button" onClick={() => setEditing(false)} className="cancel-btn">Hủy</button>
             </div>
           </form>
         )}
       </section>
 
-      {/* Change Password */}
+      {/* Đổi mật khẩu */}
       <section>
-        <h3>Change Password</h3>
+        <h3>Đổi Mật khẩu</h3>
         <form onSubmit={handlePasswordChange}>
           <input
             type="password"
-            placeholder="Current Password"
+            placeholder="Mật khẩu hiện tại"
             value={passwordData.currentPassword}
             onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
           />
           <input
             type="password"
-            placeholder="New Password"
+            placeholder="Mật khẩu mới"
             value={passwordData.newPassword}
             onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
           />
-          <button type="submit" className="update-password-btn">Update Password</button>
+          <button type="submit" className="update-password-btn">Cập nhật Mật khẩu</button>
         </form>
       </section>
 
-      {/* Delete Account */}
+      {/* Xóa tài khoản */}
       <section className="danger-zone">
-        <h3>Danger Zone</h3>
+        <h3>Vùng Nguy Hiểm</h3>
         <button onClick={handleDelete} className="delete-btn">
-          Delete My Account
+          Xóa Tài Khoản
         </button>
       </section>
     </div>

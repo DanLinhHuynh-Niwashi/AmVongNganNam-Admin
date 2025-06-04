@@ -111,7 +111,7 @@ const PlayerManager = () => {
 
   const handleBanSubmit = async () => {
     if (!banReason.trim()) {
-      alert("Please provide a reason.");
+      alert("Hãy cung cấp lý do ban.");
       return;
     }
 
@@ -134,7 +134,7 @@ const PlayerManager = () => {
       setBanModal(false);
       await loadCurrentBan(selectedPlayer._id);
     } catch (err) {
-      alert("Failed to save ban: " + (err.response?.data?.message || err.message));
+      alert("Lệnh ban thất bại: " + (err.response?.data?.message || err.message));
     } finally {
       setBanLoading(false);
     }
@@ -143,13 +143,13 @@ const PlayerManager = () => {
   const handleDeleteBan = async () => {
     setBanLoading(true);
     try {
-      if (!currentBan) throw new Error("No active ban found");
+      if (!currentBan) throw new Error("Không có lệnh ban nào.");
 
       await deleteBan(currentBan._id);
       setConfirmDeleteModal(false);
       await loadCurrentBan(selectedPlayer._id);
     } catch (err) {
-      alert("Failed to delete ban: " + (err.response?.data?.message || err.message));
+      alert("Xóa lệnh ban thất bại: " + (err.response?.data?.message || err.message));
     } finally {
       setBanLoading(false);
     }
@@ -165,12 +165,12 @@ const PlayerManager = () => {
 
   return (
     <div className="player-manager container">
-      <h1 className="mb-4">Player Manager</h1>
+      <h1 className="mb-4">Quản lý người chơi</h1>
       {error && <Alert variant="danger">{error}</Alert>}
 
       <div className="d-flex flex-wrap gap-4">
         <div className="player-list col-md-4">
-          <h4>Player List</h4>
+          <h4>Danh sách người chơi</h4>
           <ListGroup>
             {players.map((player) => (
               <ListGroup.Item
@@ -180,7 +180,7 @@ const PlayerManager = () => {
                 active={selectedPlayer?._id === player._id}
               >
                 {player.name} ({player.email}){" "}
-                {player._id === selectedPlayer?._id && currentBan && <span className="text-danger">(Banned)</span>}
+                {player._id === selectedPlayer?._id && currentBan && <span className="text-danger">(Đã Ban)</span>}
               </ListGroup.Item>
             ))}
           </ListGroup>
@@ -189,60 +189,59 @@ const PlayerManager = () => {
         <div className="player-details col-md-7">
           {selectedPlayer ? (
             <>
-              <h4>Player Info</h4>
-              <p><strong>Name:</strong> {selectedPlayer.name}</p>
+              <h4>Thông tin người chơi</h4>
+              <p><strong>Tên hiển thị:</strong> {selectedPlayer.name}</p>
               <p><strong>Email:</strong> {selectedPlayer.email}</p>
-              <p><strong>Admin:</strong> {selectedPlayer.isAdmin ? "Yes" : "No"}</p>
 
               {currentBan ? (
                 <Alert className="ban-alert">
-                  <strong>BANNED</strong>: {currentBan.reason}
+                  <strong>ĐÃ BAN</strong>: {currentBan.reason}
                   <br />
-                  <em>Expires: {currentBan.expiresAt || "Never"}</em>
+                  <em>Hết hạn: {currentBan.expiresAt || "Vĩnh viễn"}</em>
                   <div className="mt-3 d-flex gap-2">
                     <Button variant="warning" onClick={openBanModalForEdit} size="sm">
-                      <FaEdit /> Edit Ban
+                      <FaEdit /> Sửa lệnh Ban
                     </Button>
                     <Button variant="outline-danger" onClick={() => setConfirmDeleteModal(true)} size="sm">
-                      <FaTrash /> Delete Ban
+                      <FaTrash /> Xóa lệnh Ban
                     </Button>
                   </div>
                 </Alert>
               ) : (
                 <Button variant="danger" onClick={() => openBanModalForCreate(selectedPlayer)}>
                   <FaBan className="me-2" />
-                  Ban this player
+                  Ban người chơi này
                 </Button>
               )}
 
               <hr />
-              <h4>Account Status</h4>
+              <h4>Tình trạng tài khoản</h4>
               {selectedPlayerStatus ? (
                 <div>
-                  <p><strong>Instrument Tokens:</strong> {selectedPlayerStatus.instrument_token}</p>
-                  <p><strong>Song Tokens:</strong> {selectedPlayerStatus.song_token}</p>
-                  <p><strong>Unlocked Instruments:</strong> {selectedPlayerStatus.unlocked_instruments?.join(", ") || "None"}</p>
-                  <p><strong>Unlocked Songs:</strong> {selectedPlayerStatus.unlocked_songs?.length || 0}</p>
+                  <p><strong>Đồng Đàn:</strong> {selectedPlayerStatus.instrument_token}</p>
+                  <p><strong>Đồng Nhạc:</strong> {selectedPlayerStatus.song_token}</p>
+                  <p><strong>Nhạc cụ đã mở:</strong> {selectedPlayerStatus.unlocked_instruments?.join(", ") || "None"}</p>
+                  <p><strong>Bài hát đã mở:</strong> {selectedPlayerStatus.unlocked_songs?.length || 0}</p>
 
                   <hr />
                   {selectedPlayerStatus.highscore?.length > 0 ? (
                     selectedPlayerStatus.highscore.map((score, index) => (
                       <div key={score._id || index} className="mb-3 ps-2 border-start border-3 border-warning">
-                        <p><strong>Song:</strong> {score.song_id?.songName} ({score.song_id?.genre})</p>
-                        <p><strong>Easy Score:</strong> {score.easyScore} ({score.easyState})</p>
-                        <p><strong>Hard Score:</strong> {score.hardScore} ({score.hardState})</p>
+                        <p><strong>Bài hát:</strong> {score.song_id?.songName} ({score.song_id?.genre})</p>
+                        <p><strong>Điểm cấp độ Dễ:</strong> {score.easyScore} ({score.easyState})</p>
+                        <p><strong>Điểm cấp độ Khó:</strong> {score.hardScore} ({score.hardState})</p>
                       </div>
                     ))
                   ) : (
-                    <p>No highscore data available.</p>
+                    <p>Chưa có lịch sử chơi.</p>
                   )}
                 </div>
               ) : (
-                <p>No account status found for this player.</p>
+                <p>Không có thông tin tài khoản nào cho người chơi này.</p>
               )}
             </>
           ) : (
-            <p>Select a player to view details.</p>
+            <p>Chọn một người chơi để xem chi tiết.</p>
           )}
         </div>
       </div>
@@ -250,36 +249,36 @@ const PlayerManager = () => {
       {/* Ban Create/Edit Modal */}
       <Modal show={banModal} onHide={() => setBanModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>{editingBan ? "Update Ban" : "Ban Player"}</Modal.Title>
+          <Modal.Title>{editingBan ? "Cập nhật lệnh Ban" : "Ban người chơi"}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
             <Form.Group>
-              <Form.Label>Reason</Form.Label>
+              <Form.Label>Lý do</Form.Label>
               <Form.Control
                 type="text"
                 value={banReason}
                 onChange={(e) => setBanReason(e.target.value)}
-                placeholder="e.g. Cheating, abusive behavior..."
+                placeholder="e.g. Gian lận, lạm dụng..."
               />
             </Form.Group>
             <Form.Group className="mt-3">
-              <Form.Label>Expires At (optional)</Form.Label>
+              <Form.Label>Hết hạn</Form.Label>
               <Form.Control
                 type="datetime-local"
                 value={banExpiry}
                 onChange={(e) => setBanExpiry(e.target.value)}
               />
-              <Form.Text className="text-muted">Leave blank for permanent ban.</Form.Text>
+              <Form.Text className="text-muted">Để trống nếu ban vĩnh viễn.</Form.Text>
             </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setBanModal(false)} disabled={banLoading}>
-            Cancel
+            Hủy
           </Button>
           <Button variant="danger" onClick={handleBanSubmit} disabled={banLoading}>
-            {banLoading ? (editingBan ? "Updating..." : "Banning...") : (editingBan ? "Update Ban" : "Confirm Ban")}
+            {banLoading ? (editingBan ? "Đang cập nhật..." : "Đang ban...") : (editingBan ? "Cập nhật lệnh Ban" : "Xác nhận lệnh Ban")}
           </Button>
         </Modal.Footer>
       </Modal>
@@ -287,17 +286,17 @@ const PlayerManager = () => {
       {/* Confirm Delete Ban Modal */}
       <Modal show={confirmDeleteModal} onHide={() => setConfirmDeleteModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Confirm Delete Ban</Modal.Title>
+          <Modal.Title>Xác nhận xóa lệnh Ban</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Are you sure you want to remove the ban for <strong>{selectedPlayer?.name}</strong>?
+          Bạn đang xóa lệnh Ban cho người chơi <strong>{selectedPlayer?.name}</strong>?
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setConfirmDeleteModal(false)} disabled={banLoading}>
-            Cancel
+            Hủy
           </Button>
           <Button variant="danger" onClick={handleDeleteBan} disabled={banLoading}>
-            {banLoading ? "Deleting..." : "Delete Ban"}
+            {banLoading ? "Đang xóa..." : "Xóa lệnh Ban"}
           </Button>
         </Modal.Footer>
       </Modal>

@@ -25,19 +25,19 @@ const SideMenu = ({isAdmin}) => {
       <Nav className="flex-column">
         {isAdmin &&
         <Nav.Link className="menu-item" onClick={() => navigate('/songs')}>
-          <FaMusic className="icon" /> Song Manager
+          <FaMusic className="icon" /> Quản lý Bài hát
         </Nav.Link>
         }
         {isAdmin &&
         <Nav.Link className="menu-item" onClick={() => navigate('/players')}>
-          <FaUser className="icon" /> Player Manager
+          <FaUser className="icon" /> Quản lý Người chơi
         </Nav.Link>
         }
         <Nav.Link className="menu-item" onClick={() => navigate('/account')}>
-          <FaUser className="icon" /> Account
+          <FaUser className="icon" /> Tài khoản
         </Nav.Link>
         <Nav.Link className="menu-item" onClick={handleLogout}>
-          <FaSignOutAlt className="icon" /> Logout
+          <FaSignOutAlt className="icon" /> Đăng xuất
         </Nav.Link>
       </Nav>
     </div>

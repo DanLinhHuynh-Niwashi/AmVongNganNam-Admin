@@ -20,13 +20,13 @@ function Signup() {
     setGeneralError("");
 
     if (details.password !== confirmPassword) {
-      setErrors({ confirmPassword: "Passwords do not match." });
+      setErrors({ confirmPassword: "Mật khẩu không khớp." });
       return;
     }
 
     try {
       await signup(details); // Axios request
-      alert("Successfully created an account. Please log in!");
+      alert("Tạo tài khoản thành công! Hãy đăng nhập nhé.");
       navigate('/login', { replace: true });
       window.location.reload(); 
     } catch (err) {
@@ -53,11 +53,11 @@ function Signup() {
         <Row className="justify-content-center">
           <Col xs={12} md={8} className="text-center">
             <h2 style={{ color: "#4A4A4A", fontWeight: "bold", marginBottom: "30px" }}>
-              AVNN Account Center
+              Trung Tâm Tài Khoản AVNN
             </h2>
-            <h3 style={{ color: "#4A4A4A", marginBottom: "40px" }}>Create Account</h3>
+            <h3 style={{ color: "#4A4A4A", marginBottom: "40px" }}>Tạo Tài Khoản</h3>
 
-            {/* General error message */}
+            {/* Thông báo lỗi chung */}
             {generalError && <Alert variant="danger">{generalError}</Alert>}
 
             <Form onSubmit={handleSubmit}>
@@ -68,7 +68,7 @@ function Signup() {
                   required
                   style={{ height: "50px" }}
                   onChange={(e) => setDetails({ ...details, name: e.target.value })}
-                  isInvalid={!!errors.name} // Highlight field if error
+                  isInvalid={!!errors.name}
                 />
                 <Form.Control.Feedback type="invalid">{errors.name}</Form.Control.Feedback>
               </Form.Group>
@@ -87,7 +87,7 @@ function Signup() {
 
               <Form.Group style={{ marginBottom: "20px" }}>
                 <Form.Control
-                  placeholder="Password"
+                  placeholder="Mật khẩu"
                   type="password"
                   required
                   style={{ height: "50px" }}
@@ -99,7 +99,7 @@ function Signup() {
 
               <Form.Group style={{ marginBottom: "20px" }}>
                 <Form.Control
-                  placeholder="Nhắc lại password"
+                  placeholder="Nhập lại mật khẩu"
                   type="password"
                   required
                   style={{ height: "50px" }}
@@ -112,13 +112,13 @@ function Signup() {
               </Form.Group>
 
               <Button type="submit" className="mt-3 mb-4 custom-button">
-                NEXT
+                TIẾP THEO
               </Button>
 
               <div className="mb-2 account-creation">
-                Already have an account?{" "}
+                Đã có tài khoản?{" "}
                 <a href="/login" className="account-creation">
-                  Login
+                  Đăng nhập
                 </a>
               </div>
             </Form>
