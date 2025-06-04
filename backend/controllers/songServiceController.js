@@ -13,7 +13,7 @@ const db = mongoose.connection;
 
 let gfs, gridfsBucket;
 db.once("open", () => {
-    console.log("MongoDB connection open for GridFS");
+    console.log("Đã kết nối MongoDB để sử dụng GridFS");
     gridfsBucket = new mongoose.mongo.GridFSBucket(db, {
         bucketName: "uploads",
     });
@@ -27,19 +27,19 @@ const storage = new GridFsStorage({
         return new Promise((resolve, reject) => {
             crypto.randomBytes(16, (err) => {
                 if (err) {
-                    console.error("Error generating filename:", err);
+                    console.error("Lỗi khi tạo tên tệp ngẫu nhiên:", err);
                     return reject(err);
                 }
                 const filename = `${Date.now()}-${file.originalname}`;
-                console.log(`File to be saved: ${filename}`);
+                console.log(`Tệp sẽ được lưu: ${filename}`);
                 resolve({ filename, bucketName: "uploads" });
             });
         });
     },
 });
 
-storage.on("connection", () => console.log("GridFS storage is connected"));
-storage.on("error", (err) => console.error("GridFS Storage Error:", err));
+storage.on("connection", () => console.log("Đã kết nối với GridFS Storage"));
+storage.on("error", (err) => console.error("Lỗi GridFS Storage:", err));
 
 const upload = multer({ storage });
 
@@ -54,24 +54,24 @@ const deleteFile = async (fileUrl) => {
         const fileDoc = await filesCollection.findOne({ filename });
 
         if (!fileDoc) {
-            console.warn(`File not found in GridFS: ${filename}`);
+            console.warn(`Không tìm thấy tệp trong GridFS: ${filename}`);
             return;
         }
 
         await gridfsBucket.delete(fileDoc._id);
-        console.log(`Deleted file: ${filename}`);
+        console.log(`Đã xóa tệp: ${filename}`);
     } catch (error) {
-        console.error("Error deleting file:", error);
+        console.error("Lỗi khi xóa tệp:", error);
     }
 };
 
 export const createSongWithFiles = async (req, res) => {
     try {
         if (!req.files || Object.keys(req.files).length === 0) {
-            return res.status(400).json({ error: "No files uploaded" });
+            return res.status(400).json({ error: "Không có tệp nào được tải lên" });
         }
 
-        console.log("Uploaded files:", req.files);
+        console.log("Các tệp đã được tải lên:", req.files);
 
         const newSong = new Song({
             songName: req.body.songName,
@@ -86,39 +86,39 @@ export const createSongWithFiles = async (req, res) => {
         });
 
         await newSong.save();
-        console.log("Song saved:", newSong);
+        console.log("Đã lưu bài hát:", newSong);
 
-        res.json({ message: "Files uploaded & song saved successfully", song: newSong });
+        res.json({ message: "Tệp đã được tải lên và bài hát được lưu thành công", song: newSong });
     } catch (error) {
-        console.error("Error saving song:", error);
-        res.status(500).json({ error: "Internal server error" });
+        console.error("Lỗi khi lưu bài hát:", error);
+        res.status(500).json({ error: "Lỗi máy chủ nội bộ" });
     }
 };
 
 export const getAllSongs = async (req, res) => {
     try {
-        console.log("Fetching all songs...");
+        console.log("Đang lấy tất cả bài hát...");
         const songs = await Song.find();
-        console.log(`Found ${songs.length} songs.`);
+        console.log(`Đã tìm thấy ${songs.length} bài hát.`);
         res.status(200).json(songs);
     } catch (error) {
-        console.error("Error fetching songs:", error);
+        console.error("Lỗi khi lấy bài hát:", error);
         res.status(500).json({ error: error.message });
     }
 };
 
 export const getSongById = async (req, res) => {
     try {
-        console.log(`Fetching song with ID: ${req.params.id}`);
+        console.log(`Đang lấy bài hát với ID: ${req.params.id}`);
         const song = await Song.findById(req.params.id);
         if (!song) {
-            console.warn(`Song not found: ${req.params.id}`);
-            return res.status(404).json({ error: "Song not found" });
+            console.warn(`Không tìm thấy bài hát: ${req.params.id}`);
+            return res.status(404).json({ error: "Không tìm thấy bài hát" });
         }
-        console.log(`Song found: ${song.songName}`);
+        console.log(`Đã tìm thấy bài hát: ${song.songName}`);
         res.status(200).json(song);
     } catch (error) {
-        console.error(`Error fetching song with ID ${req.params.id}:`, error);
+        console.error(`Lỗi khi lấy bài hát với ID ${req.params.id}:`, error);
         res.status(500).json({ error: error.message });
     }
 };
@@ -128,10 +128,10 @@ export const updateSong = async (req, res) => {
         const { id } = req.params;
         let song = await Song.findById(id);
         if (!song) {
-            return res.status(404).json({ error: "Song not found" });
+            return res.status(404).json({ error: "Không tìm thấy bài hát" });
         }
 
-        console.log("Updating song:", song.songName);
+        console.log("Đang cập nhật bài hát:", song.songName);
 
         if (req.files.audio) await deleteFile(song.audioClip);
         if (req.files.easyMidi) await deleteFile(song.easyMidi);
@@ -148,12 +148,12 @@ export const updateSong = async (req, res) => {
         if (req.files.hardMidi) song.hardMidi = `/uploads/${req.files.hardMidi[0].filename}`;
 
         await song.save();
-        console.log("Song updated:", song);
+        console.log("Đã cập nhật bài hát:", song);
 
-        res.json({ message: "Song updated successfully", song });
+        res.json({ message: "Cập nhật bài hát thành công", song });
     } catch (error) {
-        console.error("Error updating song:", error);
-        res.status(500).json({ error: "Internal server error" });
+        console.error("Lỗi khi cập nhật bài hát:", error);
+        res.status(500).json({ error: "Lỗi máy chủ nội bộ" });
     }
 };
 
@@ -163,26 +163,26 @@ export const deleteSong = async (req, res) => {
 
         const song = await Song.findById(id);
         if (!song) {
-            return res.status(404).json({ error: "Song not found" });
+            return res.status(404).json({ error: "Không tìm thấy bài hát" });
         }
 
-        console.log(`Deleting song: ${song.songName}`);
+        console.log(`Đang xóa bài hát: ${song.songName}`);
 
         await deleteFile(song.audioClip);
         await deleteFile(song.easyMidi);
         await deleteFile(song.hardMidi);
 
         await Song.findByIdAndDelete(id);
-        console.log("Song record deleted");
+        console.log("Đã xóa bản ghi bài hát");
 
         const result = await ScoreInfo.deleteMany({ song_id: id });
-        console.log(`Deleted ${result.deletedCount} score records`);
+        console.log(`Đã xóa ${result.deletedCount} bản ghi điểm`);
 
-        res.json({ message: "Song, files, and related score data deleted successfully" });
+        res.json({ message: "Đã xóa thành công bài hát, tệp và dữ liệu điểm liên quan" });
 
     } catch (error) {
-        console.error("Error deleting song:", error);
-        res.status(500).json({ error: "Internal server error" });
+        console.error("Lỗi khi xóa bài hát:", error);
+        res.status(500).json({ error: "Lỗi máy chủ nội bộ" });
     }
 };
 
@@ -192,11 +192,11 @@ export const downloadFile = (req, res) => {
 
     downloadStream.pipe(res);
     downloadStream.on("error", (err) => {
-        console.error("Error downloading file:", err);
-        res.status(404).json({ error: "File not found" });
+        console.error("Lỗi khi tải tệp xuống:", err);
+        res.status(404).json({ error: "Không tìm thấy tệp" });
     });
     downloadStream.on("finish", () => {
-        console.log(`File ${filename} served successfully.`);
+        console.log(`Tệp ${filename} đã được phục vụ thành công.`);
     });
 };
 

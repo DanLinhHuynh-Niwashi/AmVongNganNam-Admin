@@ -3,25 +3,25 @@ export function validatePassword(password) {
     const errors = [];
 
     if (password.length < minLength) {
-        errors.push("at least 8 characters");
+        errors.push("ít nhất 8 ký tự");
     }
     if (!/[A-Z]/.test(password)) {
-        errors.push("one uppercase letter");
+        errors.push("01 ký tự hoa");
     }
     if (!/[a-z]/.test(password)) {
-        errors.push("one lowercase letter");
+        errors.push("01 ký tự thường");
     }
     if (!/\d/.test(password)) {
-        errors.push("one number");
+        errors.push("01 chữ số");
     }
     if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-        errors.push("one special character");
+        errors.push("01 ký tự đặc biệt");
     }
 
     if (errors.length > 0) {
         return { 
             isValid: false, 
-            error: `Password must contain ${errors.join(", ")}.` 
+            error: `Password phải bao gồm ${errors.join(", ")}.` 
         };
     }
     return { isValid: true };

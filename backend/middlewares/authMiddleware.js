@@ -24,7 +24,7 @@ export const verifyToken = async(req, res, next) =>{
 
   if (!token) {
     return res.status(401).json({
-      message: "Access denied. No token provided."
+      message: "Từ chối truy cập, thiếu token."
     });
   }
 
@@ -44,7 +44,7 @@ export const verifyToken = async(req, res, next) =>{
         sameSite: "Strict"
       });
       return res.status(404).json({
-        message: "User not found"
+        message: "Không tìm thấy người dùng."
       });
     }
 
@@ -52,7 +52,7 @@ export const verifyToken = async(req, res, next) =>{
     next();
   } catch(error) {
     return res.status(401).json({
-      message: "Invalid token."
+      message: "Token không hợp lệ."
     });
   }
 };
@@ -60,12 +60,12 @@ export const verifyToken = async(req, res, next) =>{
 export const isAdmin = (req, res, next) =>{
   if (!req.user) {
     return res.status(401).json({
-      message: "Access denied. No token provided."
+      message: "Từ chối truy cập, không tìm thấy người dùng hợp lệ."
     });
   }
   if (!req.user || !req.user.isAdmin) {
     return res.status(403).json({
-      message: "Access denied. Admins only."
+      message: "Từ chối truy cập, quyền hạn không đủ."
     });
   }
   next();

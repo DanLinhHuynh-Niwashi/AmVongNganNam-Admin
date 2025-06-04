@@ -5,10 +5,10 @@ import mongoose from "mongoose";
 export const getBanByUserId = async (req, res) => {
   try {
     const { userId } = req.params;
-    console.log(`Getting ban info for... ${userId}`);
+    console.log(`Lấy thông tin khóa tài khoản cho... ${userId}`);
 
     if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ message: "Invalid user ID." });
+      return res.status(400).json({ message: "ID người dùng không hợp lệ." });
     }
 
     const ban = await Ban.findOne({
@@ -18,36 +18,34 @@ export const getBanByUserId = async (req, res) => {
         { expiresAt: null }
       ]
     })
-    .sort({ createdAt: -1 }) 
+    .sort({ createdAt: -1 })
     .lean();
 
     if (!ban) {
-      return res.status(404).json({ message: "No active bans found for this user." });
+      return res.status(404).json({ message: "Không tìm thấy lệnh khóa tài khoản đang hoạt động cho người dùng này." });
     }
 
     res.json(ban);
   } catch (error) {
-    console.error("Error fetching ban by user ID:", error);
-    res.status(500).json({ message: "Server error.", error: error.message });
+    console.error("Lỗi khi lấy thông tin khóa tài khoản:", error);
+    res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
   }
 };
-
 
 export const createBan = async (req, res) => {
   const { userId, reason, expiresAt } = req.body;
   const bannedBy = req.user?.id || req.body.bannedBy;
 
   if (!mongoose.Types.ObjectId.isValid(userId)) {
-    return res.status(400).json({ message: "Invalid user ID." });
+    return res.status(400).json({ message: "ID người dùng không hợp lệ." });
   }
 
   try {
     const user = await Account.findById(userId);
     if (!user) {
-      return res.status(404).json({ message: "User not found." });
+      return res.status(404).json({ message: "Không tìm thấy người dùng." });
     }
 
-    // prevent duplicate active ban
     const existingBan = await Ban.findOne({
       userId,
       $or: [
@@ -57,7 +55,7 @@ export const createBan = async (req, res) => {
     });
 
     if (existingBan) {
-      return res.status(400).json({ message: "User is already banned." });
+      return res.status(400).json({ message: "Người dùng đã bị khóa tài khoản." });
     }
 
     const ban = await Ban.create({
@@ -67,16 +65,17 @@ export const createBan = async (req, res) => {
       bannedBy
     });
 
-    res.status(201).json({ message: "Ban created successfully.", ban });
+    res.status(201).json({ message: "Khóa tài khoản thành công.", ban });
   } catch (error) {
-    res.status(500).json({ message: "Server error.", error: error.message });
+    res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
   }
 };
 
 export const updateBan = async (req, res) => {
   const { banId, reason, expiresAt } = req.body;
+
   if (!mongoose.Types.ObjectId.isValid(banId)) {
-    return res.status(400).json({ message: "Invalid ban ID." });
+    return res.status(400).json({ message: "ID khóa tài khoản không hợp lệ." });
   }
 
   try {
@@ -90,12 +89,12 @@ export const updateBan = async (req, res) => {
     );
 
     if (!ban) {
-      return res.status(404).json({ message: "Ban not found." });
+      return res.status(404).json({ message: "Không tìm thấy lệnh khóa tài khoản." });
     }
 
-    res.json({ message: "Ban updated successfully.", ban });
+    res.json({ message: "Cập nhật lệnh khóa thành công.", ban });
   } catch (error) {
-    res.status(500).json({ message: "Server error.", error: error.message });
+    res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
   }
 };
 
@@ -103,18 +102,18 @@ export const deleteBan = async (req, res) => {
   const { banId } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(banId)) {
-    return res.status(400).json({ message: "Invalid ban ID." });
+    return res.status(400).json({ message: "ID khóa tài khoản không hợp lệ." });
   }
 
   try {
     const result = await Ban.findByIdAndDelete(banId);
 
     if (!result) {
-      return res.status(404).json({ message: "Ban not found." });
+      return res.status(404).json({ message: "Không tìm thấy lệnh khóa tài khoản." });
     }
 
-    res.json({ message: "Ban deleted successfully." });
+    res.json({ message: "Xóa lệnh khóa tài khoản thành công." });
   } catch (error) {
-    res.status(500).json({ message: "Server error.", error: error.message });
+    res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
   }
 };
