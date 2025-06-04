@@ -5,7 +5,16 @@ const API_URL = process.env.REACT_APP_API_URL
   : `http://localhost:${process.env.REACT_APP_SERVER_PORT || 5000}/api/songs`;
 
 const axiosInstance = axios.create({
-  withCredentials: true,
+  withCredentials: true
+});
+
+// Gắn interceptor để thêm Authorization từ sessionStorage (hoặc nơi khác)
+axiosInstance.interceptors.request.use((config) => {
+  const token = sessionStorage.getItem("authToken");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
 const cache = new Map();

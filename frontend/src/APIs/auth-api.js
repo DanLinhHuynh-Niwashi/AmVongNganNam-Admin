@@ -26,36 +26,50 @@ const invalidateCache = (keys = []) => {
   keys.forEach((key) => cache.delete(key));
 };
 
+const axiosInstance = axios.create({
+  withCredentials: true
+});
+
+// Gắn interceptor để thêm Authorization từ sessionStorage (hoặc nơi khác)
+axiosInstance.interceptors.request.use((config) => {
+  const token = sessionStorage.getItem("authToken");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 export const signup = async (userData) => {
-  return axios.post(`${API_URL}/signup`, userData);
+  return axiosInstance.post(`${API_URL}/signup`, userData);
 };
 
 export const login = async (credentials) => {
-  const response = await axios.post(`${API_URL}/login`, credentials, { withCredentials: true });
+  const response = await axiosInstance.post(`${API_URL}/login`, credentials);
   cache.clear();
   return response;
 };
 
 export const logout = async () => {
-  const response = await axios.post(`${API_URL}/logout`, {}, { withCredentials: true });
+  const response = await axiosInstance.post(`${API_URL}/logout`, {});
   cache.clear();
   clearSongCache();
+  sessionStorage.removeItem("authToken"); 
   clearPlayerCache();
   return response;
 };
 
 export const resetPassword = async (email) => {
-  return axios.post(`${API_URL}/reset-password`, { email });
+  return axiosInstance.post(`${API_URL}/reset-password`, { email });
 };
 
 export const changePassword = async (passwordData) => {
-  const response = await axios.post(`${API_URL}/change-password`, passwordData, { withCredentials: true });
+  const response = await axiosInstance.post(`${API_URL}/change-password`, passwordData);
   cache.clear();
   return response;
 };
 
 export const changeAccountInfo = async (accountData) => {
-  const response = await axios.post(`${API_URL}/change-info`, accountData, { withCredentials: true });
+  const response = await axiosInstance.post(`${API_URL}/change-info`, accountData);
   invalidateCache(["accountInfo"]);
   return response;
 };
@@ -66,7 +80,7 @@ export const checkAuthStatus = async (forceRefresh = false) => {
     if (cached) return cached;
   }
 
-  const response = await axios.get(`${API_URL}/me`, { withCredentials: true });
+  const response = await axiosInstance.get(`${API_URL}/me`);
   setCache("authStatus", response);
   return response;
 };
@@ -77,13 +91,13 @@ export const getAccountInfo = async (forceRefresh = false) => {
     if (cached) return cached;
   }
 
-  const response = await axios.get(`${API_URL}/account-info`, { withCredentials: true });
+  const response = await axiosInstance.get(`${API_URL}/account-info`);
   setCache("accountInfo", response);
   return response;
 };
 
 export const deleteAccount = async () => {
-  const response = await axios.delete(`${API_URL}/`, { withCredentials: true });
+  const response = await axiosInstance.delete(`${API_URL}/`);
   cache.clear();
   return response;
 };

@@ -29,6 +29,7 @@ function Login() {
       if (response.status !== 200) {
         alert(response?.data?.message);
       } else {
+        sessionStorage.setItem("authToken", response.data.token);
         navigate('/login', { replace: true });
         window.location.reload(); 
       }
