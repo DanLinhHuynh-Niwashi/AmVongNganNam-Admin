@@ -3,7 +3,7 @@ This is the server side of our project [Âm Vọng Ngàn Năm](https://github.co
 
 ## Setting up
 - Clone the repository
-- Install all necessary packages by `npm install`
+- Install all necessary packages by `npm install` on backend and frontend folder
 - Set up the `./backend/.env` as below:
 ```
 MONGO_URI=your_mongo_database
